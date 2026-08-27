@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import audio1Src from './otros/1.mp3';
-import audio2Src from './otros/2.mp3';
 
 export default function BackgroundAudio() {
   const [activeTrack, setActiveTrack] = useState(1);
@@ -8,27 +7,13 @@ export default function BackgroundAudio() {
   const [showPrompt, setShowPrompt] = useState(true);
 
   const audio1Ref = useRef(null);
-  const audio2Ref = useRef(null);
 
-  // Configuramos volúmenes altos y nivelados (ajustamos el 2 un poco más alto si es necesario)
   useEffect(() => {
     if (audio1Ref.current) audio1Ref.current.volume = 0.5; // 90% de volumen
-    if (audio2Ref.current) audio2Ref.current.volume = 1.0; // 100% de volumen para compensar si es bajo
   }, []);
 
   const handleAudio1Ended = () => {
     if (isPlaying) {
-      setActiveTrack(2);
-      if (audio2Ref.current) {
-        audio2Ref.current.currentTime = 0;
-        audio2Ref.current.play().catch(() => {});
-      }
-    }
-  };
-
-  const handleAudio2Ended = () => {
-    if (isPlaying) {
-      setActiveTrack(1);
       if (audio1Ref.current) {
         audio1Ref.current.currentTime = 0;
         audio1Ref.current.play().catch(() => {});
@@ -53,15 +38,12 @@ export default function BackgroundAudio() {
 
   const togglePlay = () => {
     if (isPlaying) {
-      if (activeTrack === 1 && audio1Ref.current) audio1Ref.current.pause();
-      if (activeTrack === 2 && audio2Ref.current) audio2Ref.current.pause();
+      if (audio1Ref.current) audio1Ref.current.pause();
       setIsPlaying(false);
     } else {
       setIsPlaying(true);
-      if (activeTrack === 1 && audio1Ref.current) {
+      if (audio1Ref.current) {
         audio1Ref.current.play().catch(() => {});
-      } else if (activeTrack === 2 && audio2Ref.current) {
-        audio2Ref.current.play().catch(() => {});
       }
     }
   };
@@ -72,12 +54,6 @@ export default function BackgroundAudio() {
         ref={audio1Ref}
         src={audio1Src}
         onEnded={handleAudio1Ended}
-        preload="auto"
-      />
-      <audio
-        ref={audio2Ref}
-        src={audio2Src}
-        onEnded={handleAudio2Ended}
         preload="auto"
       />
 

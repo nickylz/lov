@@ -6,7 +6,7 @@ export default function PasswordLock({ onCorrectPassword }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === 'te') {
+    if (password === 'te amo') {
       onCorrectPassword();
     } else {
       setError(true);
