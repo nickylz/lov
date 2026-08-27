@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+
+/* Clases de fuentes personalizadas para usarlas facilito */
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
+}
+
+.font-serif-chic {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-sans-clean {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
