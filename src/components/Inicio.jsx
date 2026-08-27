@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Importamos todas las imágenes de la carpeta otros (c1 a c8)
 import c1 from './otros/c1.png';
@@ -32,6 +32,54 @@ export default function Inicio() {
 
   const imagenAnteriorIdx = (indiceImagen - 1 + imagenesCarrusel.length) % imagenesCarrusel.length;
   const imagenSiguienteIdx = (indiceImagen + 1) % imagenesCarrusel.length;
+
+  // Lógica del contador a partir del 27 de julio de 2026
+  const [tiempoTranscurrido, setTiempoTranscurrido] = useState({ dias: 0, horas: 0, minutos: 0, segundos: 0, meses: 0, diasSueltosMeses: 0 });
+  const [mostrarEnMeses, setMostrarEnMeses] = useState(false);
+
+  useEffect(() => {
+    const fechaInicio = new Date('2026-07-27T00:00:00');
+
+    const calcularTiempo = () => {
+      const ahora = new Date();
+      const diferencia = ahora - fechaInicio;
+
+      if (diferencia > 0) {
+        const segundosTotales = Math.floor(diferencia / 1000);
+        const minutosTotales = Math.floor(segundosTotales / 60);
+        const horasTotales = Math.floor(minutosTotales / 60);
+        const diasTotales = Math.floor(horasTotales / 24);
+
+        const segundos = segundosTotales % 60;
+        const minutos = minutosTotales % 60;
+        const horas = horasTotales % 24;
+
+        // Cálculo aproximado para meses
+        let aniosDiferencia = ahora.getFullYear() - fechaInicio.getFullYear();
+        let mesesDiferencia = ahora.getMonth() - fechaInicio.getMonth() + (aniosDiferencia * 12);
+        let diasDiferencia = ahora.getDate() - fechaInicio.getDate();
+
+        if (diasDiferencia < 0) {
+          mesesDiferencia--;
+          const mesAnterior = new Date(ahora.getFullYear(), ahora.getMonth(), 0);
+          diasDiferencia += mesAnterior.getDate();
+        }
+
+        setTiempoTranscurrido({
+          dias: diasTotales,
+          horas,
+          minutos,
+          segundos,
+          meses: mesesDiferencia,
+          diasSueltosMeses: diasDiferencia
+        });
+      }
+    };
+
+    calcularTiempo();
+    const intervalo = setInterval(calcularTiempo, 1000);
+    return () => clearInterval(intervalo);
+  }, []);
 
   // Función para volver arriba de todo suavemente
   const irArriba = () => {
@@ -189,6 +237,50 @@ export default function Inicio() {
 
         </div>
 
+      </div>
+
+      {/* CONTADOR MÁS GRANDE Y RESPONSIVE ANTES DEL FOOTER */}
+      <div className="w-full max-w-3xl px-4 mb-10 flex flex-col items-center text-center space-y-4">
+        <h3 className="text-2xl md:text-3xl font-serif-chic italic text-[#5c4a42]">
+          Tiempo
+        </h3>
+
+        {!mostrarEnMeses ? (
+          <div className="flex items-center justify-center gap-3 md:gap-8 w-full">
+            <div className="flex flex-col items-center">
+              <span className="text-4xl md:text-6xl font-bold text-[#4a3b32]">{tiempoTranscurrido.dias}</span>
+              <span className="text-xs md:text-sm uppercase tracking-widest text-[#8c7a6b] font-semibold mt-1">Días</span>
+            </div>
+            <span className="text-3xl md:text-5xl text-[#c4b5a5] font-light pb-5 md:pb-6">:</span>
+            <div className="flex flex-col items-center">
+              <span className="text-4xl md:text-6xl font-bold text-[#4a3b32]">{tiempoTranscurrido.horas}</span>
+              <span className="text-xs md:text-sm uppercase tracking-widest text-[#8c7a6b] font-semibold mt-1">Horas</span>
+            </div>
+            <span className="text-3xl md:text-5xl text-[#c4b5a5] font-light pb-5 md:pb-6">:</span>
+            <div className="flex flex-col items-center">
+              <span className="text-4xl md:text-6xl font-bold text-[#4a3b32]">{tiempoTranscurrido.minutos}</span>
+              <span className="text-xs md:text-sm uppercase tracking-widest text-[#8c7a6b] font-semibold mt-1">Min</span>
+            </div>
+            <span className="text-3xl md:text-5xl text-[#c4b5a5] font-light pb-5 md:pb-6">:</span>
+            <div className="flex flex-col items-center">
+              <span className="text-4xl md:text-6xl font-bold text-[#4a3b32]">{tiempoTranscurrido.segundos}</span>
+              <span className="text-xs md:text-sm uppercase tracking-widest text-[#8c7a6b] font-semibold mt-1">Seg</span>
+            </div>
+          </div>
+        ) : (
+          <div className="py-4">
+            <span className="text-2xl md:text-4xl font-serif-chic font-semibold text-[#4a3b32]">
+              {tiempoTranscurrido.meses} meses y {tiempoTranscurrido.diasSueltosMeses} días
+            </span>
+          </div>
+        )}
+
+        <button
+          onClick={() => setMostrarEnMeses(!mostrarEnMeses)}
+          className="text-xs md:text-sm text-[#8c7a6b] hover:text-[#4a3b32] font-medium underline transition-colors pt-2 cursor-pointer"
+        >
+          {mostrarEnMeses ? "Ver en días, horas, min y seg" : "Ver en meses"}
+        </button>
       </div>
 
       {/* 4. FOOTER FINAL */}
